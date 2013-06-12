@@ -1,5 +1,5 @@
 <?php
-$biofilename= "bio.xml";
+$biofilename= "biosmall.xml";
 $bioxml=simplexml_load_file($biofilename);
 
 $ids = getUCSFids($bioxml);
@@ -33,8 +33,8 @@ function getPubXMLs($pubmedURLs){
 	$i=0;
 	
 	$csids = "";
-	for ($i = 0 ; $i < count($pubmedURLs) ; $i++){
-		$csids .= $pubmedURLs[$i].",";
+	for ($i = 0 ; $i < count($pmids) ; $i++){
+		$csids .= $pmids[$i].",";
 	}
 	$csids = substr($csids, 0 , -1);
 	$apiQuery = "https://profiles.ucsf.edu/CustomAPI/v1/JSONProfile.aspx?source=Gladstone&Person=".$csids."&publications=full";
