@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<RECORDS>
+<RECORD>
+	<vid>112</vid>
+	<nid>74</nid>
+	<field_bio_name_title></field_bio_name_title>
+	<field_bio_name_given>Katerina</field_bio_name_given>
+	<field_bio_name_middle></field_bio_name_middle>
+	<field_bio_name_family>Akassoglou</field_bio_name_family>
+	<field_bio_name_generational></field_bio_name_generational>
+	<field_bio_name_credentials>PhD</field_bio_name_credentials>
+	<field_bio_email_email>kakassoglou@gladstone.ucsf.edu</field_bio_email_email>
+	<field_ucsfid_value>24652877</field_ucsfid_value>
+	<field_bio_portrait_fid>19</field_bio_portrait_fid>
+	<field_bio_portrait_list>1</field_bio_portrait_list>
+	<field_bio_portrait_data>a:4:{s:3:"alt";s:19:"Katerina Akassoglou";s:5:"title";s:19:"Katerina Akassoglou";s:10:"focus_rect";s:15:"128,159,335,449";s:9:"crop_rect";s:0:"";}</field_bio_portrait_data>
+	<field_bio_fax_value>(415) 355-0824</field_bio_fax_value>
+</RECORD>
+</RECORDS>
