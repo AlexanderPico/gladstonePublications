@@ -6,7 +6,7 @@ $ids = getUCSFids($bioxml);
 
 $ids = array_unique($ids);
 // foreach ($ids as $id ){
-// 	echo $id."<br>";
+// 	echo $id."/n<br>";
 // }
 
 $pubArr = queryProfiles($ids);
@@ -32,13 +32,13 @@ function getPubXMLs($pubmedURLs){
 	$successfulPMIDs = array();
 	$i=0;
 	while(count($pmids) > 0 && $i<50){
-		echo "Getting Pubs Attempt: ".++$i."<br>";
+		echo "Getting Pubs Attempt: ".++$i."/n<br>";
 		foreach($pmids as $pub){
 			$pubmedQuery = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pub."&retmode=xml";
 			if ( $handle = fopen($pubmedQuery, 'r')){
-				echo "Found xml for ".$pub."  number: ".++$count." out of ".$size."<br>";
+				echo "Found xml for ".$pub."  number: ".++$count." out of ".$size."/n<br>";
 				$xml = stream_get_contents($handle);
-				// echo $xml."<br>";
+				// echo $xml."/n<br>";
 				array_push($XMLs, $xml);
 				array_push($successfulPMIDs, $pub);	
 			}
@@ -67,9 +67,9 @@ function queryProfiles( $ids ){
 	while(count($ids) > 1 && $i < 50 ){
 		$size = count($ids);
 		$num = 0;
-		echo "Trying to query profiles for Ids: ".++$i."<br>";
+		echo "Trying to query profiles for Ids: ".++$i."/n<br>";
 		foreach($ids as $id){
-			echo "Processing id: ".$id." number: ".++$num." out of ".$size."<br>";
+			echo "Processing id: ".$id." number: ".++$num." out of ".$size."/n<br>";
 			if($id != 0){
 				$person_id = (int) ($id/10) + 2569307; 
 				$apiQuery = "https://profiles.ucsf.edu/CustomAPI/v1/JSONProfile.aspx?source=Gladstone&Person=".$person_id."&publications=full";
@@ -84,8 +84,8 @@ function queryProfiles( $ids ){
 					foreach( $keys1 as $key ){
 						if (isset($json["Profiles"][0]['Publications'][$key]['PublicationSource'][0]['PublicationSourceURL'] )){
 							$URL = $json["Profiles"][0]['Publications'][$key]['PublicationSource'][0]['PublicationSourceURL'];
-							echo "found URL: ".$URL."<br>";
-							// echo $URL."<br>";
+							echo "found URL: ".$URL."/n<br>";
+							// echo $URL."/n<br>";
 							array_push($pubmedURLs, $URL); 
 						}
 						else {

@@ -20,8 +20,8 @@ if($test = true){
 	require 'bioXML2pubmedXML.php';
 	// array_unshift($pubXMLs, $xmlstr);
 	array_unshift($pubXMLs, $xmlpastestr);
-	echo "-START-".$pubXMLs[0]."-END-<br>";
-	echo "-START-".$pubXMLs[1]."-END-<br>";
+	echo "-START-".$pubXMLs[0]."-END-/n<br>";
+	echo "-START-".$pubXMLs[1]."-END-/n<br>";
 
 }
 else{
@@ -44,11 +44,11 @@ function makeTable($xmlArr){
 	$count = 0;
 	for($i = 0 ; $i < $size; $i++){ 
 		
-		echo "Processing Pub ".++$count." out of ".$size."<br>";
-		// echo $xmlstr."<br>";
+		echo "Processing Pub ".++$count." out of ".$size."/n<br>";
+		// echo $xmlstr."/n<br>";
 		$xmlstr = trim($xmlArr[$i]);
 		$xmlobj = new SimpleXMLElement($xmlstr);
-		echo "xmlobj type: ".gettype($xmlobj)."<br>";
+		echo "xmlobj type: ".gettype($xmlobj)."/n<br>";
 		$row = makerow($xmlobj);
 		fwrite($FILE, $row);
 	}
@@ -88,9 +88,9 @@ function makeheader(){
 
 
 function makeRow($xmlobj){
-	echo "xmlobj type: ".gettype($xmlobj)."<br>";
+	// echo "xmlobj type: ".gettype($xmlobj)."/n<br>";
 	$xmlstr = $xmlobj->asXML();
-	// echo $xmlstr."<br>";
+	// echo $xmlstr."/n<br>";
 	$out = '';
 	$authors = getAuthors($xmlobj);
 	$title = getTitle($xmlobj);
@@ -200,13 +200,13 @@ function getVolIssuePage($xmlobj){
 
 
 function getTitle($xmlobj){
-	echo "xmlobj type: ".gettype($xmlobj)."<br>";
+	// echo "xmlobj type: ".gettype($xmlobj)."/n<br>";
 	$xmlstr = $xmlobj->asXML();
-	echo $xmlstr."<br>";
+	// echo $xmlstr."/n<br>";
 	$xmlobj = new SimpleXMLElement($xmlstr);
 	$result = $xmlobj->xpath('//ArticleTitle');
-	echo gettype($result)."<br>";
-	echo count($result)."<br>";
+	// echo gettype($result)."/n<br>";
+	// echo count($result)."/n<br>";
 
 	return $result[0];
 
@@ -215,19 +215,19 @@ function getTitle($xmlobj){
 function getAuthors($xmlobj){
 	$xmlobj = new SimpleXMLElement($xmlobj->asXML());
 	if($fnames = $xmlobj->xpath("//AuthorList/Author/ForeName")){
-		echo "fnames obtained<br>";
-	} else echo "error getting fnames<br>";
+		// echo "fnames obtained/n<br>";
+	} else echo "error getting fnames/n<br>";
 	foreach ($fnames as $fname){
-		echo "fname: $fname <br>";
+		// echo "fname: $fname /n<br>";
 	}
 	$lnames = $xmlobj->xpath('//AuthorList/Author/LastName');
 	$initials = $xmlobj->xpath('//AuthorList/Author/Initials');
 	// print_r($fnames);
-	// echo "<br>";
+	// echo "/n<br>";
 	// print_r($lnames);
-	// echo "<br>";
+	// echo "/n<br>";
 	// print_r($initials);
-	// echo "<br>";
+	// echo "/n<br>";
 	// print_r($result);
 	$authors = array();
 	$authors['fnames'] = $fnames;
@@ -252,12 +252,12 @@ function getAffiliations($xmlobj){
 
 function getPubmedID($xmlobj){
 	if($result = $xmlobj->xpath('//ArticleIdList/ArticleId[@IdType="pubmed"]')){
-		echo "pubmedId obtained<br>";
+		// echo "pubmedId obtained/n<br>";
 	} else {
-		echo "error obtaining pubmedID<br>";
+		// echo "error obtaining pubmedID/n<br>";
 	}
 	// foreach ($result as $id){
-	// 	echo $id."<br>";
+	// 	echo $id."/n<br>";
 	// }
 	return $result[0];
 }
@@ -268,7 +268,7 @@ function getCitations($title){
 	foreach($output as $res){
 		$arr = explode("|", $res);
 		if ( levenshtein($arr[0], $title) < 5 ){
-			// echo "title  $title  res[0]".$arr[0]." citations ". $arr[2]."<br>";
+			// echo "title  $title  res[0]".$arr[0]." citations ". $arr[2]."/n<br>";
 			return $arr[2];
 		} else {
 			return "Error Obtaining Citations";
