@@ -19,7 +19,7 @@ if($test = true){
 	require 'xmlPasteTest.php';
 	require 'bioXML2pubmedXML.php';
 	// array_unshift($pubXMLs, $xmlstr);
-	array_unshift($pubXMLs, $xmlpastestr);
+	// array_unshift($pubXMLs, $xmlpastestr);
 	echo "-START-".$pubXMLs[0]."-END-/n<br>";
 	echo "-START-".$pubXMLs[1]."-END-/n<br>";
 
