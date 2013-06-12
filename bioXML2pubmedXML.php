@@ -31,21 +31,44 @@ function getPubXMLs($pubmedURLs){
 	$pmids = preg_grep($pat, $pubmedURLs);
 	$successfulPMIDs = array();
 	$i=0;
-	while(count($pmids) > 0 && $i<50){
-		echo "Getting Pubs Attempt: ".++$i."/n<br>";
-		foreach($pmids as $pub){
-			$pubmedQuery = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pub."&retmode=xml";
-			if ( $handle = fopen($pubmedQuery, 'r')){
-				echo "Found xml for ".$pub."  number: ".++$count." out of ".$size."/n<br>";
-				$xml = stream_get_contents($handle);
-				// echo $xml."/n<br>";
-				array_push($XMLs, $xml);
-				array_push($successfulPMIDs, $pub);	
-			}
-		}
-		$pmids = array_diff($pmids, $successfulPMIDs);
+	
+	$csids = "";
+	for ($i = 0 ; $i < count($pubmedURLs) ; $i++){
+		$csids .= $pubmedURLs[$i].",";
 	}
-	return $XMLs;
+	$csids = substr($csids, 0 , -1);
+	$apiQuery = "https://profiles.ucsf.edu/CustomAPI/v1/JSONProfile.aspx?source=Gladstone&Person=".$csids."&publications=full";
+	//set curl options
+	$options = array(
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_HEADER         => false,    
+			CURLOPT_POST            => 1, 
+			CURLOPT_VERBOSE        => 1 
+		);
+
+	$ch = curl_init($apiQuery);
+	curl_setopt_array($ch, $options);
+	$content = curl_exec($ch); 
+
+	echo $content;
+
+
+
+	// while(count($pmids) > 0 && $i<50){
+	// 	echo "Getting Pubs Attempt: ".++$i."/n<br>";
+	// 	foreach($pmids as $pub){
+	// 		$pubmedQuery = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pub."&retmode=xml";
+	// 		if ( $handle = fopen($pubmedQuery, 'r')){
+	// 			echo "Found xml for ".$pub."  number: ".++$count." out of ".$size."/n<br>";
+	// 			$xml = stream_get_contents($handle);
+	// 			// echo $xml."/n<br>";
+	// 			array_push($XMLs, $xml);
+	// 			array_push($successfulPMIDs, $pub);	
+	// 		}
+	// 	}
+	// 	$pmids = array_diff($pmids, $successfulPMIDs);
+	// }
+	// return $XMLs;
 }
 
 
