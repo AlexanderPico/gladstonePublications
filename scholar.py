@@ -273,7 +273,7 @@ class ScholarQuerier():
     """
 
     UA = 'Mozilla/5.0 (X11; U; FreeBSD i386; en-US; rv:1.9.2.9) Gecko/20100913 Firefox/3.6.9'
-
+    UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36'
     class Parser(ScholarParser120726):
         def __init__(self, querier):
             ScholarParser.__init__(self)
