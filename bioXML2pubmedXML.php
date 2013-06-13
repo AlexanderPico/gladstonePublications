@@ -1,21 +1,28 @@
 <?php
+echo "starting bioXML2pubmedXML.php<br>";
 $biofilename= "biosmall.xml";
+
 $bioxml=simplexml_load_file($biofilename);
 
 $ids = getUCSFids($bioxml);
 
 $ids = array_unique($ids);
 // foreach ($ids as $id ){
-// 	echo $id."/n<br>";
+// 	echo $id."\n<br>";
 // }
+echo "ids ".gettype($ids)." count ".count($ids)." id[0]".$ids[0]."<br>";
 
 $pubArr = queryProfiles($ids);
 
+echo "pubarr ".gettype($pubArr)." count ".count($pubArr)."<br>";
+
 $pubmedURLs = $pubArr['pubmedURLs'];
+
+echo "pubmedURLs ".gettype($pubmedURLs)." count ".count($pubmedURLs)."<br>";
 
 $pubmedURLs = array_unique($pubmedURLs);
 
-$pubXMLs = getPubXMLs($pubmedURLs);
+$pubXML = getPubXML($pubmedURLs);
 
 
 
@@ -23,12 +30,17 @@ $pubXMLs = getPubXMLs($pubmedURLs);
 
 
 
-function getPubXMLs($pubmedURLs){
+function getPubXML($pubmedURLs){
 	$XMLs = array();
 	$size = count($pubmedURLs);
 	$count = 0;
-	$pat = "/[0-9]+$/";
-	$pmids = preg_grep($pat, $pubmedURLs);
+	$pat = "/(\d+)$/";
+	$pmids = array();
+	foreach( $pubmedURLs as $url){
+		preg_match($pat, $url, $matches);
+		array_push($pmids, $matches[1]);
+	}
+	// $pmids = preg_grep($pat, $pubmedURLs);
 	$successfulPMIDs = array();
 	$i=0;
 	
@@ -37,38 +49,29 @@ function getPubXMLs($pubmedURLs){
 		$csids .= $pmids[$i].",";
 	}
 	$csids = substr($csids, 0 , -1);
-	$apiQuery = "https://profiles.ucsf.edu/CustomAPI/v1/JSONProfile.aspx?source=Gladstone&Person=".$csids."&publications=full";
+	// echo $csids."<br>";
+	// $apiQuery = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$csids."&retmode=xml";
+	$apiQuery = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
+
+	// echo  $apiQuery."<br>";
 	//set curl options
 	$options = array(
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_HEADER         => false,    
-			CURLOPT_POST            => 1, 
-			CURLOPT_VERBOSE        => 1 
-		);
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_HEADER         => false,    
+		CURLOPT_POST            => 1, 
+		CURLOPT_VERBOSE        => 1,
+		CURLOPT_POSTFIELDS     =>  "db=pubmed&id=$csids&retmode=xml"
+	);
 
 	$ch = curl_init($apiQuery);
 	curl_setopt_array($ch, $options);
-	$content = curl_exec($ch); 
+	if( $content = curl_exec($ch) ){
+		echo "curl success<br>";
+	}else {
+		die("curl failure"); 
+	}
 
-	echo $content;
-
-
-
-	// while(count($pmids) > 0 && $i<50){
-	// 	echo "Getting Pubs Attempt: ".++$i."/n<br>";
-	// 	foreach($pmids as $pub){
-	// 		$pubmedQuery = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pub."&retmode=xml";
-	// 		if ( $handle = fopen($pubmedQuery, 'r')){
-	// 			echo "Found xml for ".$pub."  number: ".++$count." out of ".$size."/n<br>";
-	// 			$xml = stream_get_contents($handle);
-	// 			// echo $xml."/n<br>";
-	// 			array_push($XMLs, $xml);
-	// 			array_push($successfulPMIDs, $pub);	
-	// 		}
-	// 	}
-	// 	$pmids = array_diff($pmids, $successfulPMIDs);
-	// }
-	// return $XMLs;
+	return $content;
 }
 
 
@@ -88,11 +91,12 @@ function queryProfiles( $ids ){
 	$i = 0;
 	$successfulIDs = array();
 	while(count($ids) > 1 && $i < 50 ){
+
 		$size = count($ids);
 		$num = 0;
-		echo "Trying to query profiles for Ids: ".++$i."/n<br>";
+		echo "Trying to query profiles for Ids: ".++$i."\n<br>";
 		foreach($ids as $id){
-			echo "Processing id: ".$id." number: ".++$num." out of ".$size."/n<br>";
+			echo "Processing id: ".$id." number: ".++$num." out of ".$size."\n<br>";
 			if($id != 0){
 				$person_id = (int) ($id/10) + 2569307; 
 				$apiQuery = "https://profiles.ucsf.edu/CustomAPI/v1/JSONProfile.aspx?source=Gladstone&Person=".$person_id."&publications=full";
@@ -107,8 +111,7 @@ function queryProfiles( $ids ){
 					foreach( $keys1 as $key ){
 						if (isset($json["Profiles"][0]['Publications'][$key]['PublicationSource'][0]['PublicationSourceURL'] )){
 							$URL = $json["Profiles"][0]['Publications'][$key]['PublicationSource'][0]['PublicationSourceURL'];
-							echo "found URL: ".$URL."/n<br>";
-							// echo $URL."/n<br>";
+							echo "found URL: ".$URL."\n<br>";
 							array_push($pubmedURLs, $URL); 
 						}
 						else {
