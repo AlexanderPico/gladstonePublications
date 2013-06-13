@@ -1,6 +1,6 @@
 <?php
 echo "starting bioXML2pubmedXML.php<br>";
-$biofilename= "biosmall.xml";
+$biofilename= "bio.xml";
 
 $bioxml=simplexml_load_file($biofilename);
 
@@ -58,7 +58,7 @@ function getPubXML($pubmedURLs){
 	$options = array(
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_HEADER         => false,    
-		CURLOPT_POST            => 1, 
+		CURLOPT_POST           => 1, 
 		CURLOPT_VERBOSE        => 1,
 		CURLOPT_POSTFIELDS     =>  "db=pubmed&id=$csids&retmode=xml"
 	);
