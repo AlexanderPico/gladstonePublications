@@ -96,6 +96,7 @@ function makeheader(){
 function makeRow($xmlobj){
 	// echo "xmlobj type: ".gettype($xmlobj)."\n<br>";
 	$xmlstr = $xmlobj->asXML();
+	echo "pmid :".getPubmedID($xmlobj)."<br>";
 	// echo $xmlstr."\n<br>";
 	$out = '';
 	$authors = getAuthors($xmlobj);
@@ -304,7 +305,7 @@ function getPubmedID($xmlobj){
 
 function getCitations($title){
 	echo "Title = $title<br>";
-	$scholarQry = "python scholar.py --csv $title";
+	$scholarQry = "python scholar.py --csv '$title'";
 	echo "ScholarQry = $scholarQry<br>";
 	exec($scholarQry, $output);
 	echo "output length: ".count($output)."<br>";
