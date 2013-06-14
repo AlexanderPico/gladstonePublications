@@ -189,7 +189,7 @@ function executeQuery($qry){
 	}else {
 		die("curl failure"); 
 	}
-	echo "$content<br>";
+	echo "Content: $content<br>";
 }
 
 
