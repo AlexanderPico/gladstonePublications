@@ -182,7 +182,7 @@ function executeQuery($qry){
 		CURLOPT_VERBOSE        => 1,
 		CURLOPT_POSTFIELDS     =>  $qry
 	);
-	$ch = curl_init();
+	$ch = curl_init($apiURL);
 	curl_setopt_array($ch, $options);
 	if( $content = curl_exec($ch) ){
 		echo "curl success<br>";
