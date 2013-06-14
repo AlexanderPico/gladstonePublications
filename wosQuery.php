@@ -203,8 +203,6 @@ src=\"app.id=GladstonePub,env.id=Gladstone,partner.email=timothy.laurent@gladsto
  <list> 
 <!-- WHO'S REQUESTING --> 
  <map> 
- <val name=\"username\">LAMR</val> 
- <val name=\"password\">serv!ce1</val> 
  </map>
 <!-- WHAT'S REQUESTED --> 
  <map> 
