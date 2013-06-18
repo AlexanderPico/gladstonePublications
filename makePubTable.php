@@ -29,7 +29,7 @@ $test = false;
 // }
 
 require 'bioXML2pubmedXML.php';
-
+require 'wosQuery.php';
 
 makeTable($pubXML);
 
@@ -38,6 +38,8 @@ function makeTable($xmlStr){
 	// echo $xmlStr."<br>";
 	$xmlobj  =  new SimpleXMLElement($xmlStr); 
 	$xmlArr = $xmlobj->xpath('//PubmedArticle');
+	$pmidArr = $xmlobj->xpath('//ArticleIdList/ArticleId[@IdType="pubmed"]');
+	$pmidCiteHash = makePMIDtoCiteCountHash($pmidArr);
 	$outdir = "out";
 	$filename = date('Y-m-d_H:i:s')."-pubTable.tsv";
 	if (!file_exists($outdir)) {
@@ -55,13 +57,21 @@ function makeTable($xmlStr){
 		// $xmlstr = trim($xmlArr[$i]);
 		// $xmlobj = new SimpleXMLElement($xmlstr);
 		// echo "xmlobj type: ".gettype($xmlobj)."\n<br>";
-		$row = makerow($xml);
+		$row = makerow($xml, $pmidCiteHash);
 		fwrite($FILE, $row);
 	}
 	fclose($FILE);
 }
 
-
+function makePMIDtoCiteCountHash($pmidArr){
+	$pmids = array();
+	foreach( $pmidArr as $pmid){
+		echo $pmid."\n";
+		array_push($pmids, $pmid);
+	}
+	$pmidToCite = wosGetCitations($pmids);
+	return $pmidToCite;
+}
 
 function makeheader(){
 	$out = '';
@@ -93,10 +103,11 @@ function makeheader(){
 }
 
 
-function makeRow($xmlobj){
+function makeRow($xmlobj, $pmidCiteHash){
 	// echo "xmlobj type: ".gettype($xmlobj)."\n<br>";
 	$xmlstr = $xmlobj->asXML();
-	echo "pmid :".getPubmedID($xmlobj)."<br>";
+	$pmid = getPubmedID($xmlobj);
+	echo "pmid :".$pmid."<br>";
 	// echo $xmlstr."\n<br>";
 	$out = '';
 	$authors = getAuthors($xmlobj);
@@ -113,7 +124,7 @@ function makeRow($xmlobj){
 	$out .= "\t";
 	$out .= getPubmedID($xmlobj);
 	$out .= "\t";
-	$out .= getCitations($title);
+	$out .= $pmidCiteHash["pmid-".$pmid];
 	$out .= "\t";
 	$out .= makeAuthorFieldFullName($authors);
 	$out .= "\t";
@@ -303,22 +314,23 @@ function getPubmedID($xmlobj){
 }
 
 
-function getCitations($title){
-	echo "Title = $title<br>";
-	$scholarQry = "python scholar.py --csv '$title'";
-	echo "ScholarQry = $scholarQry<br>";
-	exec($scholarQry, $output);
-	echo "output length: ".count($output)."<br>";
-	foreach($output as $res){
-		echo "$res<br>";
-		$arr = explode("|", $res);
-		if ( levenshtein($arr[0], $title) < 5 ){
-			echo "title  $title  res[0]".$arr[0]." citations ". $arr[2]."\n<br>";
-			return $arr[2];
-		} else {
-			echo "Could not find title<br>";
-			return "NA";
-		}
-	}
-}
+
+// function getCitations($title){
+// 	echo "Title = $title<br>";
+// 	$scholarQry = "python scholar.py --csv '$title'";
+// 	echo "ScholarQry = $scholarQry<br>";
+// 	exec($scholarQry, $output);
+// 	echo "output length: ".count($output)."<br>";
+// 	foreach($output as $res){
+// 		echo "$res<br>";
+// 		$arr = explode("|", $res);
+// 		if ( levenshtein($arr[0], $title) < 5 ){
+// 			echo "title  $title  res[0]".$arr[0]." citations ". $arr[2]."\n<br>";
+// 			return $arr[2];
+// 		} else {
+// 			echo "Could not find title<br>";
+// 			return "NA";
+// 		}
+// 	}
+// }
 
