@@ -1,6 +1,6 @@
 <?php
 echo "starting bioXML2pubmedXML.php<br>";
-$biofilename= "bio.xml";
+$biofilename= "biosmall.xml";
 
 $bioxml=simplexml_load_file($biofilename);
 

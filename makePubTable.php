@@ -35,6 +35,7 @@ makeTable($pubXML);
 
 
 function makeTable($xmlStr){
+	var_dump($xmlStr);
 	// echo $xmlStr."<br>";
 	$xmlobj  =  new SimpleXMLElement($xmlStr); 
 	$xmlArr = $xmlobj->xpath('//PubmedArticle');
@@ -83,6 +84,8 @@ function makeheader(){
 	$out .= "\t";
 	$out.= "Vol:Issue:Page";
 	$out .= "\t";
+	$out.= "Month";
+	$out .= "\t";
 	$out.= "Year";
 	$out .= "\t";
 	$out .= "Pubmed_Id";
@@ -120,11 +123,17 @@ function makeRow($xmlobj, $pmidCiteHash){
 	$out .= "\t";
 	$out .= getVolIssuePage($xmlobj);
 	$out .= "\t";
+	$out .= getMonth($xmlobj);
+	$out .= "\t";
 	$out .= getYear($xmlobj);
 	$out .= "\t";
 	$out .= getPubmedID($xmlobj);
 	$out .= "\t";
-	$out .= $pmidCiteHash["pmid-".$pmid];
+	if( isset($pmidCiteHash["pmid-".$pmid]) ){
+		$out .= $pmidCiteHash["pmid-".$pmid];
+	} else{
+		$out .= "NA-not found in Array";
+	}
 	$out .= "\t";
 	$out .= makeAuthorFieldFullName($authors);
 	$out .= "\t";
@@ -184,6 +193,18 @@ function getJournalTitle($xmlobj){
 function getYear($xmlobj){
 	$xmlobj = new SimpleXMLElement($xmlobj->asXML());
 	$out = $xmlobj->xpath('//PubDate/Year');
+	if( strlen($out[0]) < 4 ){
+		$out = $xmlobj->xpath('//PubMedPubDate[@PubStatus="pubmed"]/Year');
+	}
+	if( strlen($out[0]) < 4 ){
+		$out = "error obtaining pub year";
+	}
+	return $out[0];
+}
+
+function getMonth($xmlobj){
+	$xmlobj = new SimpleXMLElement($xmlobj->asXML());
+	$out = $xmlobj->xpath('//PubMedPubDate[@PubStatus="pubmed"]/Month');
 	return $out[0];
 }
 
